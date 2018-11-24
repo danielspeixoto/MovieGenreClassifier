@@ -16,3 +16,8 @@ def k_fold(k, df, y, clf):
         final = final + accuracy
 
     return final/k
+
+def loss(y, y_pred):
+    result = np.sum(y == y_pred)/float(len(y_pred))
+    print("--------Current Accuracy: " + str(result))
+    return result
