@@ -7,6 +7,9 @@ from nltk import TweetTokenizer
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import nltk.corpus.reader.wordnet as wordnet
+
 
 def get(filename, genres):
     data = pd.read_csv(filename, encoding='utf8')
@@ -20,26 +23,53 @@ def get(filename, genres):
 stemmer = SnowballStemmer(language='english')
 stop_words = set(stopwords.words('english'))
 
+
+lemmatizer =  WordNetLemmatizer()
+
 ADJECTIVE = 'JJ'
 ADVERB = 'RB'
 VERB = 'VB'
+NOUN = 'NN'
+NOUN_PROPER = 'NNP'
 TAG_INDEX = 1
 WORD_INDEX = 0
+
+lemma_tag = {
+    ADJECTIVE: wordnet.ADJ,
+    ADVERB: wordnet.ADV,
+    VERB: wordnet.VERB,
+    NOUN: wordnet.NOUN
+}
+
+tag_list = [NOUN, VERB, ADVERB, ADJECTIVE]
+
 def pos_tag_filter(words_tag):
-    filtered = [word_tag for word_tag in words_tag
-                if ADJECTIVE in word_tag[TAG_INDEX] or
-                ADVERB in word_tag[TAG_INDEX]
-                ]
+    filtered = []
+    for word_tag in words_tag:
+        if word_tag[TAG_INDEX] == NOUN_PROPER:
+            continue
+        for tag in tag_list:
+            if tag in word_tag[TAG_INDEX]:
+                filtered.append(
+                    (
+                        word_tag[WORD_INDEX].lower(),
+                        lemma_tag[tag]
+                    )
+                )
     return filtered
 
 def analyze(sentence: str):
     tokenizer = TweetTokenizer().tokenize
     tokens = tokenizer(sentence)
-    tokens = [token for token in tokens if re.match(r"[A-Za-z]", token)]
-    tokens = [token.lower() for token in tokens]
-    filtered = [word for word in tokens if word not in stop_words]
-    stemmed = [stemmer.stem(word) for word in filtered]
-    return stemmed
+    words_tag = nltk.pos_tag(tokens)
+    filtered_words_tag = pos_tag_filter(words_tag)
+    # tokens = [token.lower() for token in tokens]
+    # tokens = [(token[WORD_INDEX].lower(), token[TAG_INDEX])
+    #           for token in words_tags if re.match(r"[A-Za-z]", token[WORD_INDEX])]
+    lemmas = [lemmatizer.lemmatize(word[WORD_INDEX], pos=word[TAG_INDEX]) for word in filtered_words_tag]
+    # filtered = [word for word in tokens if word not in stop_words]
+    # stemmed = [stemmer.stem(word) for word in filtered]
+    return lemmas
 
 def analyze_simple(sentence: str):
     tokenizer = TweetTokenizer().tokenize

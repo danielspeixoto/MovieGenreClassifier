@@ -10,14 +10,14 @@ from Run import Run
 
 df, y = data.read("movies-pre_processed.csv")
 configs = [
-    # {
-    #     "parameters": {
-    #         'tfidf__use_idf': [False],
-    #         # 'vect__ngram_range': [(1, 2)],
-    #         'clf__alpha': [0.85],
-    #     },
-    #     "algorithm": MultinomialNB()
-    # },
+    {
+        "parameters": {
+            'tfidf__use_idf': [False],
+            # 'vect__ngram_range': [(1, 1)],
+            'clf__alpha': [0.85],
+        },
+        "algorithm": MultinomialNB()
+    },
     # {
     #     "parameters": {
     #         # 'vect__ngram_range': [(1, 1), (1, 2)]
@@ -32,12 +32,14 @@ configs = [
     #         cache_size=10000
     #     )
     # },
-    {
-        "parameters": {
-            "clf__n_neighbors": [3, 5, 7]
-        },
-        "algorithm": KNeighborsClassifier()
-    }
+    # {
+    #     "parameters": {
+    #         "clf__n_neighbors": [5],
+    #         # "clf__weights": ['distance'],
+    #         'clf__metric': ['cosine']
+    #     },
+    #     "algorithm": KNeighborsClassifier(n_jobs=-1)
+    # }
 ]
 #
 validations = [
@@ -52,7 +54,7 @@ for validator in validations:
 
         # text_clf = run.pipeline()
         text_clf = GridSearchCV(run.pipeline(), config['parameters'],
-                                n_jobs=-1, cv=3, verbose=True,
+                                n_jobs=1, cv=10, verbose=True,
                                 scoring=make_scorer(
                                     validation.loss,
                                     greater_is_better=True))
