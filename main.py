@@ -10,28 +10,28 @@ from Run import Run
 
 df, y = data.read("movies-pre_processed.csv")
 configs = [
-    {
-        "parameters": {
-            'tfidf__use_idf': [False],
-            # 'vect__ngram_range': [(1, 1)],
-            'clf__alpha': [0.85],
-        },
-        "algorithm": MultinomialNB()
-    },
     # {
     #     "parameters": {
-    #         # 'vect__ngram_range': [(1, 1), (1, 2)]
-    #         # 'clf__gamma': 'scale',
-    #         # 'clf__C': [1, 100],
-    #         'clf__kernel': ['linear'],
-    #         # 'max_iter'
+    #         # 'tfidf__use_idf': [True, False],
+    #         # 'vect__ngram_range': [(1, 1)],
+    #         'clf__alpha': [0.7],
     #     },
-    #     "algorithm": SVC(
-    #         tol=1e-1,
-    #         max_iter=-1,
-    #         cache_size=10000
-    #     )
+    #     "algorithm": MultinomialNB()
     # },
+    {
+        "parameters": {
+            # 'vect__ngram_range': [(1, 1), (1, 2)]
+            # 'clf__gamma': 'scale',
+            # 'clf__C': [1, 100],
+            'clf__kernel': ['linear'],
+            # 'max_iter'
+        },
+        "algorithm": SVC(
+            # tol=1e-1,
+            max_iter=2000,
+            cache_size=10000
+        )
+    },
     # {
     #     "parameters": {
     #         "clf__n_neighbors": [5],
@@ -54,7 +54,7 @@ for validator in validations:
 
         # text_clf = run.pipeline()
         text_clf = GridSearchCV(run.pipeline(), config['parameters'],
-                                n_jobs=1, cv=10, verbose=True,
+                                n_jobs=2, cv=3, verbose=True,
                                 scoring=make_scorer(
                                     validation.loss,
                                     greater_is_better=True))

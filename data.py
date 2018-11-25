@@ -49,7 +49,7 @@ def pos_tag_filter(words_tag):
         if word_tag[TAG_INDEX] == NOUN_PROPER:
             continue
         for tag in tag_list:
-            if tag in word_tag[TAG_INDEX]:
+            if tag in word_tag[TAG_INDEX] and word_tag[WORD_INDEX] not in stop_words:
                 filtered.append(
                     (
                         word_tag[WORD_INDEX].lower(),
@@ -63,12 +63,8 @@ def analyze(sentence: str):
     tokens = tokenizer(sentence)
     words_tag = nltk.pos_tag(tokens)
     filtered_words_tag = pos_tag_filter(words_tag)
-    # tokens = [token.lower() for token in tokens]
-    # tokens = [(token[WORD_INDEX].lower(), token[TAG_INDEX])
-    #           for token in words_tags if re.match(r"[A-Za-z]", token[WORD_INDEX])]
-    lemmas = [lemmatizer.lemmatize(word[WORD_INDEX], pos=word[TAG_INDEX]) for word in filtered_words_tag]
-    # filtered = [word for word in tokens if word not in stop_words]
-    # stemmed = [stemmer.stem(word) for word in filtered]
+    lemmas = [lemmatizer.lemmatize(word[WORD_INDEX], pos=word[TAG_INDEX])
+              for word in filtered_words_tag]
     return lemmas
 
 def analyze_simple(sentence: str):

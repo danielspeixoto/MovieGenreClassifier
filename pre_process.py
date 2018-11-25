@@ -5,7 +5,7 @@ from sklearn.utils import resample
 import data
 
 print("Reading")
-df, y = data.get("mini.csv", ['comedy', 'drama'])
+df, y = data.get("movies.csv", ['comedy', 'drama'])
 # df.apply(lambda doc: pre_process(doc))
 print("Processing...")
 pre_data = [data.pre_process(row) for idx, row in df.iteritems()]
@@ -29,7 +29,7 @@ print("New proportion: ")
 print(df['Genre'].value_counts())
 
 print("Saving")
-df.to_csv('mini-pre_processed.csv')
+df.to_csv('movies-pre_processed.csv')
 # with open('pre_processed.csv', 'w', newline='\n') as file:
 #     wr = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC)
 #     wr.writerow(["Plot", "Genre"])
