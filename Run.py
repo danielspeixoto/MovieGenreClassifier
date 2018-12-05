@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.pipeline import Pipeline
 
 import data
@@ -39,5 +40,4 @@ class Run:
         )
 
     def params(self):
-        print("Params")
         print("----Classifier: " + type(self.algorithm).__name__)

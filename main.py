@@ -2,6 +2,7 @@ from sklearn.metrics import make_scorer
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 import data
 import validation
@@ -13,7 +14,7 @@ configs = [
         "parameters": {
             'tfidf__use_idf': [True, False],
             'vect__ngram_range': [(1, 1)],
-           'clf__alpha': [0.7],
+           #'clf__alpha': [0.7],
         },
         "algorithm": MultinomialNB()
     },
@@ -25,11 +26,19 @@ configs = [
     #     },
     #     "algorithm": KNeighborsClassifier(n_jobs=-1)
     #}
+    {
+        "parameters": {
+            'tfidf__use_idf': [True, False],
+            'vect__ngram_range': [(1, 1)],
+           'clf__criterion': ['entropy'],
+        },
+        "algorithm": DecisionTreeClassifier()
+    },
 ]
 #
 validations = [
     # K Fold
-    lambda df, y, clf: validation.k_fold(3, df, y, clf),
+    lambda df, y, clf: validation.k_fold(10, df, y, clf),
 ]
 
 for validator in validations:
@@ -46,4 +55,4 @@ for validator in validations:
         print("--------Recall: %.2f" % results[2])
         print("--------F-Score: %.2f" % results[3])
         print("##########################################")
-    print("**************************************")
+        print("**************************************")

@@ -32,7 +32,7 @@ def k_fold(k, df, y, clf):
     return [final_accuracy/k, 
             final_precision/k,
             final_recall/k,
-            final_fscore,]
+            final_fscore/k,]
 
 def loss(y, y_pred):
     result = np.sum(y == y_pred)/float(len(y_pred))
