@@ -2,7 +2,6 @@ from sklearn.metrics import make_scorer
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import LinearSVC, SVC
 
 import data
 import validation
@@ -10,27 +9,13 @@ from Run import Run
 
 df, y = data.read("movies-pre_processed.csv")
 configs = [
-    # {
-    #     "parameters": {
-    #         # 'tfidf__use_idf': [True, False],
-    #         # 'vect__ngram_range': [(1, 1)],
-    #         'clf__alpha': [0.7],
-    #     },
-    #     "algorithm": MultinomialNB()
-    # },
     {
         "parameters": {
-            # 'vect__ngram_range': [(1, 1), (1, 2)]
-            # 'clf__gamma': 'scale',
-            # 'clf__C': [1, 100],
-            'clf__kernel': ['linear'],
-            # 'max_iter'
+            'tfidf__use_idf': [True, False],
+            'vect__ngram_range': [(1, 1)],
+           'clf__alpha': [0.7],
         },
-        "algorithm": SVC(
-            # tol=1e-1,
-            max_iter=2000,
-            cache_size=10000
-        )
+        "algorithm": MultinomialNB()
     },
     # {
     #     "parameters": {
@@ -39,7 +24,7 @@ configs = [
     #         'clf__metric': ['cosine']
     #     },
     #     "algorithm": KNeighborsClassifier(n_jobs=-1)
-    # }
+    #}
 ]
 #
 validations = [
@@ -52,19 +37,13 @@ for validator in validations:
         run = Run(algorithm=config["algorithm"])
         run.params()
 
-        # text_clf = run.pipeline()
-        text_clf = GridSearchCV(run.pipeline(), config['parameters'],
-                                n_jobs=2, cv=3, verbose=True,
-                                scoring=make_scorer(
-                                    validation.loss,
-                                    greater_is_better=True))
+        text_clf = run.pipeline()
         text_clf.fit(df, y)
-        print("Params")
-        print(text_clf.best_params_)
-        print("score")
-        print(text_clf.best_score_)
 
-        # accuracy = validator(df, y, text_clf)
-        # print("--------Accuracy: %.2f" % accuracy)
+        results = validator(df, y, text_clf)
+        print("--------Accuracy: %.2f" % results[0])
+        print("--------Precision: %.2f" % results[1])
+        print("--------Recall: %.2f" % results[2])
+        print("--------F-Score: %.2f" % results[3])
         print("##########################################")
     print("**************************************")
